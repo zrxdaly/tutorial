@@ -1,0 +1,16 @@
+# Automatically generated using 'make Makefile.tests'
+# DO NOT EDIT, edit 'Makefile' instead
+ALLTESTS = \
+	Green2D.c \
+
+TESTS = \
+
+SPECIAL_TESTS = \
+
+ALLPAGES = \
+	Canopy.h.page \
+	Green2D.c.page \
+	output_slices.h.page \
+	physics.h.page \
+	SGS_TKE.h.page \
+

@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//home/dai/Documents/talks/workshop_Shanghai_oct_30/tutorial/part2_diffusion/**)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
