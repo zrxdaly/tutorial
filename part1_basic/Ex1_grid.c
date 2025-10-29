@@ -25,8 +25,8 @@ int main() {
   
   // Visualize the grid
   view(width=800, height=800);  // Set image size
-  cells();                 // Draw grid cells
-  box();                   // Draw domain boundary
+  cells();                      // Draw grid cells
+  box();                        // Draw domain boundary
   save("Uniform_grid.png");
   
   return 0;

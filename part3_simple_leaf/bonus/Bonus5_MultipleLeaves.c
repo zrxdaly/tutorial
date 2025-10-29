@@ -52,21 +52,21 @@ double r1 = 5, r2 = 1;      // Ellipse semi-axes
 // BONUS CHALLENGE: Adjust leaf positions and spacing
 // ============================================================================
 // Leaf 1 (upstream) position
-double x1 = -10.0;          // x-coordinate of first leaf center
-double y1 = 0.0;            // y-coordinate of first leaf center
+double X1 = -10.0;          // x-coordinate of first leaf center
+double Y1 = 0.0;            // y-coordinate of first leaf center
 
 // Leaf 2 (downstream) position
-double x2 = 10.0;           // x-coordinate of second leaf center (spacing = 20)
-double y2 = 0.0;            // y-coordinate of second leaf center
+double X2 = 10.0;           // x-coordinate of second leaf center (spacing = 20)
+double Y2 = 0.0;            // y-coordinate of second leaf center
 
 // Try different spacings:
-// double x2 = 8.0;   // Close spacing (spacing = 18)
-// double x2 = 15.0;  // Wide spacing (spacing = 25)
-// double y2 = 5.0;   // Offset vertically
+// double X2 = 8.0;   // Close spacing (spacing = 18)
+// double X2 = 15.0;  // Wide spacing (spacing = 25)
+// double Y2 = 5.0;   // Offset vertically
 
 // Define two ellipses
-#define LEAF1 (sq((x-x1)/r1) + sq((y-y1)/r2) - 1.)
-#define LEAF2 (sq((x-x2)/r1) + sq((y-y2)/r2) - 1.)
+#define LEAF1 (sq((x-X1)/r1) + sq((y-Y1)/r2) - 1.)
+#define LEAF2 (sq((x-X2)/r1) + sq((y-Y2)/r2) - 1.)
 
 // Combined geometry: solid where either leaf is present
 #define BOTH_LEAVES (min(LEAF1, LEAF2))
@@ -151,8 +151,8 @@ event diag_flux (t = 300; t += 1) {
 
       // Determine which leaf this flux belongs to
       // Check if point is closer to leaf1 or leaf2
-      double dist1 = sqrt(sq(x - x1) + sq(y - y1));
-      double dist2 = sqrt(sq(x - x2) + sq(y - y2));
+      double dist1 = sqrt(sq(x - X1) + sq(y - Y1));
+      double dist2 = sqrt(sq(x - X2) + sq(y - Y2));
 
       if (dist1 < dist2) {
         flx_leaf1 += flux_contribution;

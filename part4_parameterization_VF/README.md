@@ -15,6 +15,7 @@ This simulation is organized into four main files, each handling specific physic
 This is the "control center" of your simulation. Think of it as the conductor of an orchestra.
 
 **What it does:**
+
 - Sets up the computational domain (100m × 100m greenhouse)
 - Defines the wave-shaped roof boundary that blocks flow
 - Controls when different physical processes are computed
@@ -22,6 +23,7 @@ This is the "control center" of your simulation. Think of it as the conductor of
 - Saves simulation snapshots for later analysis
 
 **Key features:**
+
 - **Roof geometry**: A wavy ceiling (like a sine wave) from y=70m to y=100m that forces velocity to zero
 - **Adaptive mesh**: Grid automatically refines near important features (canopy, roof)
 - **Event-driven**: Different physics happen at different times (e.g., roof damping every timestep, videos every second)
@@ -35,6 +37,7 @@ This is the "control center" of your simulation. Think of it as the conductor of
 This file handles the "rules of physics" for the indoor climate.
 
 **What it does:**
+
 - Defines physical constants (gravity, air properties, initial wind)
 - Sets boundary conditions (periodic sides, no-slip top/bottom)
 - Computes buoyancy force (warm air rises, cool air sinks)
@@ -42,6 +45,7 @@ This file handles the "rules of physics" for the indoor climate.
 - Handles scalar diffusion with source terms (heat and water vapor from plants)
 
 **Key physics:**
+
 - **Buoyancy**: Converts temperature differences to vertical acceleration
 - **Canopy drag**: Trees act like obstacles that slow the wind (drag = Cd × PAD × |u| × u)
 - **Heat and moisture sources**: Plants release heat and water vapor into the air
@@ -55,12 +59,14 @@ This file handles the "rules of physics" for the indoor climate.
 This file treats vegetation as active participants in the flow, not just obstacles.
 
 **What it does:**
+
 - Defines three cube-shaped canopy elements (like trees or crop rows)
 - Computes leaf temperature by balancing multiple energy fluxes
 - Calculates heat exchange between leaves and air
 - Computes transpiration (water vapor released by plants)
 
 **Key physics (3-step energy balance):**
+
 1. **Geometry**: Uses the "fractions method" to define where vegetation is located
 2. **Radiation**: Longwave radiation exchange between leaves, sky, and ground
 3. **Convection & Transpiration**:
@@ -76,12 +82,14 @@ This file treats vegetation as active participants in the flow, not just obstacl
 This file handles turbulence that is too small for the grid to resolve directly.
 
 **What it does:**
+
 - Computes turbulent kinetic energy (TKE = energy of swirling eddies)
 - Calculates "eddy viscosity" (how much turbulence mixes momentum)
 - Determines mixing length (how far turbulent eddies can reach)
 - Accounts for turbulence production (from shear and buoyancy) and dissipation
 
 **Key concepts:**
+
 - **Mixing length**: In unstable air (warm below), eddies can grow large. In stable air (warm above), they're suppressed
 - **TKE equation**: ∂e/∂t = Shear Production + Buoyancy Production - Dissipation - Canopy Drag
 - **Stability-dependent**: The code adjusts turbulence based on whether air is stable or unstable
@@ -131,15 +139,16 @@ make cleanall
 After running, you'll get:
 
 1. **Videos** (every 1 second of simulation time):
+
    - `b.mp4`: Buoyancy field (shows temperature stratification)
    - `ux.mp4`: Horizontal velocity (shows wind patterns)
    - `cw.mp4`: Water vapor concentration
-
 2. **Data files**:
+
    - `dump-00005`: Simulation snapshot at t=5s (for restart)
    - `W12/slice_5`: 2D slice data at end time
-
 3. **Directory structure**:
+
    ```
    part4_parameterization_VF/
    ├── Green2D.c              # Main simulation
@@ -157,12 +166,12 @@ After running, you'll get:
 
 ### Domain Configuration
 
-| Parameter | Value | Description |
-|-----------|-------|-------------|
-| Domain size | 100m × 100m | Horizontal × Vertical |
-| Grid resolution | 64 base + 7 levels AMR | ~128×128 effective near features |
-| Time duration | 5 seconds | Short for demonstration |
-| Physics | Buoyancy-driven flow | Temperature differences drive circulation |
+| Parameter       | Value                  | Description                               |
+| --------------- | ---------------------- | ----------------------------------------- |
+| Domain size     | 100m × 100m           | Horizontal × Vertical                    |
+| Grid resolution | 64 base + 7 levels AMR | ~128×128 effective near features         |
+| Time duration   | 5 seconds              | Short for demonstration                   |
+| Physics         | Buoyancy-driven flow   | Temperature differences drive circulation |
 
 ### Canopy Configuration
 
@@ -187,20 +196,22 @@ After running, you'll get:
 **Objective:** Understand how vegetation distribution affects flow patterns.
 
 **Tasks:**
+
 1. **Change canopy positions** (Canopy.h, lines 26-28):
+
    ```c
    #define CUBE1_X 30.   // Move first cube
    #define CUBE2_X 50.   // Keep second cube
    #define CUBE3_X 70.   // Move third cube closer
    ```
-
 2. **Change canopy size** (Canopy.h, lines 21-22):
+
    ```c
    #define CUBE_HEIGHT 20.   // Shorter vegetation
    #define CUBE_WIDTH 10.    // Wider vegetation
    ```
-
 3. **Run simulation and compare**:
+
    - How does velocity change between vegetation elements?
    - Where do you see the strongest turbulence?
    - How does spacing affect the flow?
@@ -214,19 +225,21 @@ After running, you'll get:
 **Objective:** Explore how roof geometry affects flow circulation.
 
 **Tasks:**
+
 1. **Change wave number** (Green2D.c, line 28):
+
    ```c
    #define NUM_WAVES 1    // Single wave (gentle)
    #define NUM_WAVES 4    // Four waves (complex)
    ```
-
 2. **Change wave amplitude** (Green2D.c, line 32):
+
    ```c
    #define ROOF_AMPLITUDE 5.    // Flatter roof
    #define ROOF_AMPLITUDE 20.   // Steeper roof
    ```
-
 3. **Visualize and analyze**:
+
    - How does flow pattern change with roof shape?
    - Does a wavy roof create recirculation zones?
    - Where does air get "trapped"?
@@ -240,17 +253,19 @@ After running, you'll get:
 **Objective:** Observe buoyancy-driven convection from heated vegetation.
 
 **Tasks:**
+
 1. **Increase leaf temperature** (Green2D.c, line 109):
+
    ```c
    TV[] = 305.15;   // Warm leaves (32°C instead of 22°C)
    ```
-
 2. **Increase ground temperature** (physics.h, line 30):
+
    ```c
    #define BSURF (gCONST / TREF * 30.0)  // Hotter surface
    ```
-
 3. **Run and observe**:
+
    - Watch `b.mp4`: Do you see rising plumes above vegetation?
    - Check `ux.mp4`: Does buoyancy create horizontal flow?
    - How far do thermal plumes reach before hitting the roof?
@@ -264,21 +279,24 @@ After running, you'll get:
 **Objective:** See how mean wind interacts with canopy and roof.
 
 **Tasks:**
+
 1. **Add initial wind** (physics.h, line 28):
+
    ```c
    #define WIND(s) (2.0)   // Constant 2 m/s wind
    ```
-
 2. **Change boundary conditions** (physics.h, uncomment lines 77-80):
+
    ```c
    u.n[left] = dirichlet(2.0);    // Inflow at left
    p[left] = neumann(0.);
    u.n[right] = neumann(0.);      // Outflow at right
    p[right] = dirichlet(0.);
    ```
-   And comment out `periodic(left);` on line 74
 
+   And comment out `periodic(left);` on line 74
 3. **Analyze**:
+
    - How does wind interact with vegetation?
    - Do you see wake regions behind each canopy element?
    - How does the wavy roof deflect the wind?
@@ -287,152 +305,26 @@ After running, you'll get:
 
 ---
 
-### 🔬 **Exercise 5: Study Turbulence (Advanced)**
-
-**Objective:** Investigate turbulent mixing in different stability conditions.
-
-**Tasks:**
-1. **Create unstable conditions** (warm surface, cool air):
-   ```c
-   // In Green2D.c, init event:
-   TV[] = 305.15;           // Warm leaves
-
-   // In physics.h:
-   #define STRAT(s) (gCONST / TREF * 15.0)  // Cooler air aloft
-   ```
-
-2. **Create stable conditions** (cool surface, warm air):
-   ```c
-   TV[] = 285.15;           // Cool leaves
-   #define STRAT(s) (gCONST / TREF * 30.0)  // Warmer air aloft
-   ```
-
-3. **Compare TKE**:
-   - Add TKE output to visualization (Green2D.c, output_b event):
-     ```c
-     squares("e120", min = 0, max = 0.01, map = cool_warm, linear = true);
-     save("tke.mp4");
-     ```
-   - Which condition produces more turbulence?
-   - Where is TKE highest: near canopy, near roof, or in between?
-
-**Expected learning:** Unstable stratification (warm below, cool above) enhances turbulence. Stable stratification suppresses it.
-
----
-
-### 🎯 **Exercise 6: Optimize for Ventilation (Design Challenge)**
-
-**Objective:** Design the best greenhouse layout for air circulation.
-
-**Tasks:**
-1. **Design question:** How would you arrange 3 vegetation rows to maximize air exchange while minimizing dead zones?
-
-2. **Try different configurations:**
-   - Even spacing (20, 50, 80)
-   - Clustered (20, 25, 30)
-   - Front-weighted (10, 30, 70)
-
-3. **Evaluation metrics:**
-   - Average velocity near canopy (better mixing)
-   - Variance in velocity (uniformity)
-   - Water vapor removal efficiency
-
-4. **Bonus:** Combine with roof shape optimization!
-
-**Expected learning:** Engineering design involves tradeoffs. Optimal solutions depend on objectives (mixing vs. uniformity vs. energy efficiency).
-
----
-
-## Advanced Analysis Ideas
-
-### 1. **Quantitative Analysis**
-
-Add diagnostics to track:
-- Maximum velocity in domain
-- Average turbulent kinetic energy
-- Heat flux from canopy to air
-- Water vapor concentration gradients
-
-```c
-event diagnostics(t += 0.1) {
-  double max_u = 0, avg_tke = 0, heat_flux = 0;
-  foreach(reduction(max:max_u) reduction(+:avg_tke)) {
-    double vel = sqrt(sq(u.x[]) + sq(u.y[]));
-    if (vel > max_u) max_u = vel;
-    avg_tke += e120[];
-  }
-  fprintf(stderr, "t=%g max_u=%g avg_tke=%g\n", t, max_u, avg_tke/pow(2, grid->depth));
-}
-```
-
-### 2. **Parameter Sweeps**
-
-Systematically vary one parameter and plot results:
-- Canopy spacing: 10m, 20m, 30m, 40m
-- Canopy height: 10m, 20m, 30m
-- Roof wave number: 1, 2, 3, 4, 5
-
-### 3. **Compare with Theory**
-
-Test scaling laws:
-- **Richardson number**: Ri = buoyancy/shear² (stability indicator)
-- **Drag law**: Drag ∝ u² (verify quadratic relationship)
-- **Mixing length**: λ ∝ κz in neutral conditions
-
----
-
-## Tips for Success
-
-1. **Start simple**: Run the default case first. Make sure you understand what's happening before changing parameters.
-
-2. **Change one thing at a time**: If you change multiple parameters, you won't know which caused the effect.
-
-3. **Use visualization**: The videos are your best tool for intuition. Watch them carefully.
-
-4. **Check for steady state**: Is the simulation converging? Some configurations may need longer time.
-
-5. **Document your changes**: Keep notes on what you changed and what happened.
-
-6. **Compare before/after**: Always keep the baseline results to compare with your modifications.
-
----
-
-## Troubleshooting
-
-**Problem:** Simulation crashes or produces NaN
-- **Solution:** Check that parameters are physical (positive diffusivities, reasonable temperatures)
-
-**Problem:** Videos show no interesting features
-- **Solution:** Increase simulation time (TEND), or increase initial perturbations
-
-**Problem:** Flow looks "choppy" or unrealistic
-- **Solution:** Increase maxlevel for better resolution, or decrease time step
-
-**Problem:** Compilation errors
-- **Solution:** Make sure BASILISK environment variable is set, and all header files are in the same directory
-
----
-
 ## Physical Insights
 
 ### What This Simulation Teaches
 
 1. **Coupled Physics**: Real systems involve many interacting processes (flow, heat, moisture, turbulence)
-
 2. **Scale Separation**:
+
    - Large scales (mean flow, canopy spacing): Resolved explicitly
    - Small scales (turbulent eddies): Modeled via SGS_TKE
-
 3. **Parameterization Philosophy**:
+
    - We can't simulate every leaf, so we model vegetation as a porous medium
    - We can't resolve every eddy, so we model turbulence statistically
-
 4. **Geometry Matters**:
+
    - Canopy distribution affects mixing
    - Roof shape creates recirculation
    - Both influence greenhouse microclimate
-
 5. **Engineering Applications**:
+
    - Greenhouse design for optimal crop growth
    - Urban canopy flows (trees in cities)
    - Indoor air quality and ventilation
@@ -451,21 +343,18 @@ Test scaling laws:
 
 - Large Eddy Simulation (LES)
 - Plant Area Density (PAD)
-- Monin-Obukhov Similarity Theory
 - Stomatal conductance and transpiration
-- Atmospheric boundary layer physics
 
 ---
 
 ## Summary
 
 This simulation demonstrates a complete LES framework for greenhouse indoor climate:
-- ✅ Resolved flow field with adaptive mesh refinement
-- ✅ Sub-grid scale turbulence closure
-- ✅ Canopy energy balance and source terms
-- ✅ Complex geometry (wavy roof)
-- ✅ Coupled heat and moisture transport
+
+- Resolved flow field with adaptive mesh refinement
+- Sub-grid scale turbulence closure
+- Canopy energy balance and source terms
+- Complex geometry (wavy roof)
+- Coupled heat and moisture transport
 
 **Key takeaway:** Indoor climate flows are complex, but by breaking the problem into modular components (main driver, physics, canopy, turbulence), we can build comprehensive simulations that capture the essential processes.
-
-**Next steps:** Extend to 3D, add radiative transfer, couple with crop growth model, or apply to other indoor agricultural environments!

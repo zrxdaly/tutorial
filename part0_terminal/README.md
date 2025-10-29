@@ -84,4 +84,4 @@ This folder contains exercises to practice basic command line operations.
 - Use `cd` to navigate between directories
 - Use `rm` to remove files (be careful!)
 - Use `rm -r` to remove directories and their contents
-- Use `help command` to get more information about a command
+- Use `man command` to get more information about a command

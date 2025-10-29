@@ -26,11 +26,11 @@ int main() {
   double circle_radius1 = 0.3; // Circle radius1
 
   // here you should define the second hot spot based on README.md
-  double circle_x2 = ...;      // fill in Circle center x2
-  double circle_y2 = ...;      // fill in Circle center y2
+  double circle_x2 = ...;      // TODO: fill in Circle center x2
+  double circle_y2 = ...;      // TODO: fill in Circle center y2
   double circle_radius2 = 0.3; // Circle radius2
 
-  // how should we modify refine function? what should you add
+  // TODO: how should we modify refine function? what should you add
   refine((sq(x - circle_x1) + sq(y - circle_y1) < sq(circle_radius1) ||
           ..... && level < max_level);
 

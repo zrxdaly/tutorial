@@ -17,7 +17,7 @@ int main() {
   origin(-0.5, -0.5);      // Set origin at center
   
   // Set initial grid resolution
-  init_grid(4);            // 4x4 cells
+  init_grid(32);            // 4x4 cells 2^n
 
   // Define circle parameters
   double circle_x = 0.0;      // Circle center x
@@ -45,7 +45,7 @@ int main() {
   box();  // Draw domain boundary
   labels("temp", lw=0.5);
   save("Temperature_field.png");
+
   dump("temp_variables");
-  
   return 0;
 }

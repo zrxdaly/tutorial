@@ -71,7 +71,7 @@ event injection(i++){
     double NOZZLE2_X = ...;
     double NOZZLE2_Y = ...;
     double NOZZLE3_X = ...;
-    double NOZZLE3_Y = ...;         // fillin the location of other two nozzle
+    double NOZZLE3_Y = ...;         // TODO: fillin the location of other two nozzle
     foreach(){
         // Nozzle 1 (center)
         double dist1 = sqrt(sq(x - NOZZLE1_X) + sq(y - NOZZLE1_Y));

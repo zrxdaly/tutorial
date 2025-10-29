@@ -71,8 +71,7 @@ Is the simulation time long enough to let the CO2 diffuse from the injection poi
 
 **Key Advantages of Implicit Solver**:
 
-- **Unconditionally stable**: No strict timestep limitation
-- **More accurate**: Better handling of boundary conditions
+- **mostly stable**: No strict timestep limitation
 - **Efficient**: Built-in sparse matrix solvers
 
 **Solver Usage**:
