@@ -145,9 +145,26 @@ After running, you'll get:
    - `cw.mp4`: Water vapor concentration
 2. **Data files**:
 
-   - `dump-00005`: Simulation snapshot at t=5s (for restart)
-   - `W12/slice_5`: 2D slice data at end time
-3. **Directory structure**:
+   - `dump-080`: Simulation snapshot at t=80s (for restart)
+   - `W12/slice_80`: 2D slice data at end time
+3. **Visualization**:
+
+   You can plot vertical profiles and 2D slices of the fields using the Python script:
+
+   ```bash
+   # Activate conda environment
+   conda activate workshop
+
+   # Run plotting script
+   python plot_slice_profiles.py
+   ```
+
+   This will generate:
+   - Vertical profiles of `cw` and `ux`
+   - 2D slices showing spatial distribution (with roof masking)
+   - Output files: `profile_cw.png`, `profile_Ux.png`, `2D_slice_cw.png`, `2D_slice_ux.png`
+
+4. **Directory structure**:
 
    ```
    part4_parameterization_VF/
@@ -156,6 +173,7 @@ After running, you'll get:
    ├── Canopy.h               # Vegetation model
    ├── SGS_TKE.h              # Turbulence model
    ├── Makefile               # Build instructions
+   ├── plot_slice_profiles.py # Visualization script
    ├── b.mp4, ux.mp4, cw.mp4  # Visualization outputs
    └── W12/                   # Output directory
    ```
@@ -189,119 +207,97 @@ After running, you'll get:
 
 ---
 
-## Interesting Exercises for Students
+## Exercise: Wind Effect on Canopy Flow
 
-### 🌱 **Exercise 1: Modify Canopy Geometry**
+### **Exercise 1: Test Different Wind Speeds**
 
-**Objective:** Understand how vegetation distribution affects flow patterns.
+**Objective:** Understand how background wind speed affects flow patterns around the canopy.
 
-**Tasks:**
+**Step 1: Create experiment directories**
 
-1. **Change canopy positions** (Canopy.h, lines 26-28):
+```bash
+# Create main experiment folder
+mkdir wind_exp
+cd wind_exp
 
-   ```c
-   #define CUBE1_X 30.   // Move first cube
-   #define CUBE2_X 50.   // Keep second cube
-   #define CUBE3_X 70.   // Move third cube closer
-   ```
-2. **Change canopy size** (Canopy.h, lines 21-22):
+# Create two sub-folders for different wind conditions
+mkdir W1 W2
 
-   ```c
-   #define CUBE_HEIGHT 20.   // Shorter vegetation
-   #define CUBE_WIDTH 10.    // Wider vegetation
-   ```
-3. **Run simulation and compare**:
+# Copy source files to each folder
+cp ../*.c ../*.h W1/
+cp ../*.c ../*.h W2/
+cp ../Makefile W1/
+cp ../Makefile W2/
+```
 
-   - How does velocity change between vegetation elements?
-   - Where do you see the strongest turbulence?
-   - How does spacing affect the flow?
+**Step 2: Modify wind conditions**
 
-**Expected learning:** Vegetation acts as obstacles. Closer spacing creates more drag and turbulence.
+Edit the `physics.h` file in each folder to change the wind speed (U0 parameter, line 27):
 
----
+**For W1 folder (Weak wind):**
+```bash
+cd W1
+# Edit physics.h, change line 27:
+#define U0 0.2    // Weak wind: 0.2 m/s
+```
 
-### 🌊 **Exercise 2: Modify Roof Shape**
+**For W2 folder (Strong wind):**
+```bash
+cd W2
+# Edit physics.h, change line 27:
+#define U0 0.6    // Strong wind: 0.6 m/s
+```
 
-**Objective:** Explore how roof geometry affects flow circulation.
+**Step 3: Run simulations**
 
-**Tasks:**
+```bash
+# Run W1 simulation
+cd W1
+make Green2D.tst
+cd ..
 
-1. **Change wave number** (Green2D.c, line 28):
+# Run W2 simulation
+cd W2
+make Green2D.tst
+cd ..
+```
 
-   ```c
-   #define NUM_WAVES 1    // Single wave (gentle)
-   #define NUM_WAVES 4    // Four waves (complex)
-   ```
-2. **Change wave amplitude** (Green2D.c, line 32):
+**Step 4: Visualize and compare**
 
-   ```c
-   #define ROOF_AMPLITUDE 5.    // Flatter roof
-   #define ROOF_AMPLITUDE 20.   // Steeper roof
-   ```
-3. **Visualize and analyze**:
+```bash
+conda activate workshop
 
-   - How does flow pattern change with roof shape?
-   - Does a wavy roof create recirculation zones?
-   - Where does air get "trapped"?
+# Plot W1 results
+cd W1
+python ../plot_slice_profiles.py
+cd ..
 
-**Expected learning:** Geometry strongly influences flow. Complex shapes create complex flow patterns.
+# Plot W2 results
+cd W2
+python ../plot_slice_profiles.py
+cd ..
+```
 
----
+**Questions to consider:**
+1. How does wind speed affect the velocity field around the canopy?
+2. Where do you see wake regions forming behind vegetation?
+3. How does stronger wind change the water vapor distribution?
+4. Compare the 2D slices - what differences do you observe?
 
-### 🌡️ **Exercise 3: Heat the Canopy**
-
-**Objective:** Observe buoyancy-driven convection from heated vegetation.
-
-**Tasks:**
-
-1. **Increase leaf temperature** (Green2D.c, line 109):
-
-   ```c
-   TV[] = 305.15;   // Warm leaves (32°C instead of 22°C)
-   ```
-2. **Increase ground temperature** (physics.h, line 30):
-
-   ```c
-   #define BSURF (gCONST / TREF * 30.0)  // Hotter surface
-   ```
-3. **Run and observe**:
-
-   - Watch `b.mp4`: Do you see rising plumes above vegetation?
-   - Check `ux.mp4`: Does buoyancy create horizontal flow?
-   - How far do thermal plumes reach before hitting the roof?
-
-**Expected learning:** Heating creates convection. Warm air rises, creating circulation patterns.
+**Expected learning:** Background wind creates wakes behind obstacles. Stronger wind leads to more pronounced wake regions and affects scalar transport.
 
 ---
 
-### 💨 **Exercise 4: Add Background Wind**
+## Additional Exercises to Explore
 
-**Objective:** See how mean wind interacts with canopy and roof.
+Feel free to explore other parameters on your own:
 
-**Tasks:**
+1. **Canopy Geometry**: Modify canopy positions (CUBE1_X, CUBE2_X, CUBE3_X) or dimensions (CUBE_HEIGHT, CUBE_WIDTH) in `Canopy.h`
+2. **Roof Shape**: Change NUM_WAVES or ROOF_AMPLITUDE in `Green2D.c` to see how roof geometry affects circulation
+3. **Heating**: Increase leaf temperature (TV[] initialization) or surface buoyancy (BSURF) to observe thermal convection
+4. **Boundary Conditions**: Switch from periodic to inflow/outflow boundaries in `physics.h`
 
-1. **Add initial wind** (physics.h, line 28):
-
-   ```c
-   #define WIND(s) (2.0)   // Constant 2 m/s wind
-   ```
-2. **Change boundary conditions** (physics.h, uncomment lines 77-80):
-
-   ```c
-   u.n[left] = dirichlet(2.0);    // Inflow at left
-   p[left] = neumann(0.);
-   u.n[right] = neumann(0.);      // Outflow at right
-   p[right] = dirichlet(0.);
-   ```
-
-   And comment out `periodic(left);` on line 74
-3. **Analyze**:
-
-   - How does wind interact with vegetation?
-   - Do you see wake regions behind each canopy element?
-   - How does the wavy roof deflect the wind?
-
-**Expected learning:** Wind + obstacles = wakes. Flow separates behind vegetation creating complex patterns.
+Experiment with these parameters and observe how they change the greenhouse microclimate!
 
 ---
 

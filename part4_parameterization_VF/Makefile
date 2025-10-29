@@ -9,7 +9,7 @@ Green2D.tst: Green2D.c
 # Clean up simulation output files
 .PHONY: cleanout
 cleanout:
-	rm -rf *.mp4 dump-00* *.tags.d *.s.d W12 a.out
+	rm -rf *.mp4 dump-00* *.tags.d *.s.d W12 a.out dump-*
 
 # Clean everything (compiled files + output files)
 .PHONY: cleanall

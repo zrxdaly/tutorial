@@ -13,7 +13,7 @@
 // Simulation parameters
 int maxlevel, minlevel;              // Grid refinement levels
 double eps;                          // Adaptation criterion
-double TEND = 50.;                    // Simulation end time [s]
+double TEND = 80.;                    // Simulation end time [s]
 
 #include "physics.h"
 
@@ -184,7 +184,7 @@ event slice_make(t += TEND)
 event dump_file1(t += TEND)
 {
     char name[80];
-    sprintf(name, "dump-%05d", (int)t);
+    sprintf(name, "dump-%03d", (int)t);
     dump(file = name);
 }
 
